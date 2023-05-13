@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/testprojects_cryptocurrency_watcher_rest_api
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: false
+
+coinlore:
+  api:
+    url: https://api.coinlore.net
+supported-cryptocurrencies:
+  currencies:
+    - id: '90'
+      symbol: 'BTC'
+    - id: '80'
+      symbol: 'ETH'
+    - id: '48543'
+      symbol: 'SOL'
