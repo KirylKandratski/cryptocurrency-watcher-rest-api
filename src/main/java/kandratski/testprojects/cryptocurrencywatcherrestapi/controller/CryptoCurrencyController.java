@@ -2,7 +2,6 @@ package kandratski.testprojects.cryptocurrencywatcherrestapi.controller;
 
 import kandratski.testprojects.cryptocurrencywatcherrestapi.dto.CryptoCurrencyDto;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.dto.UserNotificationRequest;
-import kandratski.testprojects.cryptocurrencywatcherrestapi.entity.CryptoCurrency;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.entity.UserNotification;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.service.CryptoCurrencyService;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.service.UserService;
