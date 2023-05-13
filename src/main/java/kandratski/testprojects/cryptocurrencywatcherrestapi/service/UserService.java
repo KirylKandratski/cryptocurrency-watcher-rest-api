@@ -4,6 +4,7 @@ import kandratski.testprojects.cryptocurrencywatcherrestapi.entity.CryptoCurrenc
 import kandratski.testprojects.cryptocurrencywatcherrestapi.entity.UserNotification;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.repository.UserNotificationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -18,22 +19,10 @@ public class UserService {
     }
 
     public UserNotification registerUserForNotification(String username, String symbol) {
-
-        if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Имя пользователя не может быть пустым");
-        }
-
-        if (symbol == null || symbol.trim().isEmpty()) {
-            throw new IllegalArgumentException("Код криптовалюты не может быть пустым");
-        }
+        validateInputs(username, symbol);
 
         CryptoCurrency cryptoCurrency = cryptoCurrencyService.getCryptoCurrencyBySymbol(symbol);
-
-        Optional<UserNotification> existingUserNotification = userNotificationRepository.findByUsernameAndCryptoCurrency(username, cryptoCurrency);
-
-        if (existingUserNotification.isPresent()) {
-            throw new IllegalStateException("Пользователь уже зарегистрирован для уведомлений о данной криптовалюте");
-        }
+        checkUserNotificationExists(username, cryptoCurrency);
 
         UserNotification userNotification = new UserNotification();
         userNotification.setUsername(username);
@@ -47,4 +36,20 @@ public class UserService {
         }
     }
 
+    private void validateInputs(String username, String symbol) {
+        if (!StringUtils.hasText(username)) {
+            throw new IllegalArgumentException("Имя пользователя не может быть пустым");
+        }
+        if (!StringUtils.hasText(symbol)) {
+            throw new IllegalArgumentException("Код криптовалюты не может быть пустым");
+        }
+    }
+
+    private void checkUserNotificationExists(String username, CryptoCurrency cryptoCurrency) {
+        Optional<UserNotification> existingUserNotification = userNotificationRepository.findByUsernameAndCryptoCurrency(username, cryptoCurrency);
+
+        if (existingUserNotification.isPresent()) {
+            throw new IllegalStateException("Пользователь уже зарегистрирован для уведомлений о данной криптовалюте");
+        }
+    }
 }
