@@ -5,7 +5,9 @@ import kandratski.testprojects.cryptocurrencywatcherrestapi.client.CoinLoreApiCl
 import kandratski.testprojects.cryptocurrencywatcherrestapi.config.SupportedCryptoCurrencies;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.config.SupportedCryptoCurrency;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.dto.CoinLoreResponse;
+import kandratski.testprojects.cryptocurrencywatcherrestapi.dto.CryptoCurrencyDto;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.entity.CryptoCurrency;
+import kandratski.testprojects.cryptocurrencywatcherrestapi.mapper.CryptoCurrencyMapper;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.repository.CryptoCurrencyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CryptoCurrencyService {
@@ -25,23 +28,36 @@ public class CryptoCurrencyService {
     private final NotificationService notificationService;
     private final SupportedCryptoCurrencies supportedCryptoCurrencies;
     private final CoinLoreApiClient coinLoreApiClient;
+    private final CryptoCurrencyMapper cryptoCurrencyMapper;
 
     public CryptoCurrencyService(CryptoCurrencyRepository cryptoCurrencyRepository,
                                  NotificationService notificationService,
                                  SupportedCryptoCurrencies supportedCryptoCurrencies,
-                                 CoinLoreApiClient coinLoreApiClient) {
+                                 CoinLoreApiClient coinLoreApiClient,
+                                 CryptoCurrencyMapper cryptoCurrencyMapper) {
         this.cryptoCurrencyRepository = cryptoCurrencyRepository;
         this.notificationService = notificationService;
         this.supportedCryptoCurrencies = supportedCryptoCurrencies;
         this.coinLoreApiClient = coinLoreApiClient;
+        this.cryptoCurrencyMapper = cryptoCurrencyMapper;
     }
 
-    public List<CryptoCurrency> getAllCryptoCurrencies() {
+    public List<CryptoCurrencyDto> getAllCryptoCurrencies() {
         List<CryptoCurrency> cryptoCurrencyList = cryptoCurrencyRepository.findAll();
         log.info("Список всех доступных криптовалют {}", cryptoCurrencyList);
-        return cryptoCurrencyList;
+        List<CryptoCurrencyDto> cryptoCurrencyDtos = cryptoCurrencyList.stream()
+                .map(cryptoCurrencyMapper::toDto)
+                .collect(Collectors.toList());
+
+        return cryptoCurrencyDtos;
+
     }
 
+    public CryptoCurrencyDto getCryptoCurrencyDtoBySymbol(String symbol) {
+        CryptoCurrency cryptoCurrency = getCryptoCurrencyBySymbol(symbol);
+        CryptoCurrencyDto cryptoCurrencyDto = cryptoCurrencyMapper.toDto(cryptoCurrency);
+        return cryptoCurrencyDto;
+    }
     public CryptoCurrency getCryptoCurrencyBySymbol(String symbol) {
         CryptoCurrency cryptoCurrency = cryptoCurrencyRepository.findBySymbol(symbol)
                 .orElseThrow(() -> new NoSuchElementException("Криптовалюта с символом " + symbol + " не найдена."));
