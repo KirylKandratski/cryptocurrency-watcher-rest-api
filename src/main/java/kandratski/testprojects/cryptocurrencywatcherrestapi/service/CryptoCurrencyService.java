@@ -37,8 +37,9 @@ public class CryptoCurrencyService {
     }
 
     public List<CryptoCurrency> getAllCryptoCurrencies() {
-        log.info("Список всех доступных криптовалют {}", cryptoCurrencyRepository.findAll()); //todo
-        return cryptoCurrencyRepository.findAll();
+        List<CryptoCurrency> cryptoCurrencyList = cryptoCurrencyRepository.findAll();
+        log.info("Список всех доступных криптовалют {}", cryptoCurrencyList);
+        return cryptoCurrencyList;
     }
 
     public CryptoCurrency getCryptoCurrencyBySymbol(String symbol) {
@@ -80,13 +81,13 @@ public class CryptoCurrencyService {
             if (newPrice != -1) {
                 cryptoCurrency.setCurrentPrice(newPrice);
                 cryptoCurrencyRepository.save(cryptoCurrency);
-                notificationService.checkAndNotifyPriceChange(cryptoCurrency, newPrice);
+                notificationService.checkAndNotifyPriceChange(cryptoCurrency);
             } else {
                 log.error("Не удалось обновить цену для криптовалюты {}", cryptoCurrency.getSymbol());
             }
         }
 
-        log.info("Цена криптовалют {}", cryptoCurrencies); //todo
+        log.info("Цена криптовалют {}", cryptoCurrencies);
     }
 
     private double getNewPriceFromCoinLore(String coinId) {

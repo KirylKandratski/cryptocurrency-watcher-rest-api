@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class NotificationService {
@@ -20,17 +20,23 @@ public class NotificationService {
     }
 
     @Transactional
-    public void checkAndNotifyPriceChange(CryptoCurrency cryptoCurrency, double newPrice) {
-        Optional<UserNotification> userNotifications = userNotificationRepository.findByCryptoCurrency(cryptoCurrency);
-        if (userNotifications.isPresent()) {
-            double registeredPrice = userNotifications.get().getRegisteredPrice();
-            double priceChangePercentage = ((newPrice - registeredPrice) / registeredPrice) * 100; //todo
-            if (Math.abs(priceChangePercentage) >= 1) {
-                for (UserNotification userNotification : userNotifications.stream().toList()) {
+    public void checkAndNotifyPriceChange(CryptoCurrency cryptoCurrency) {
+        List<UserNotification> userNotifications = userNotificationRepository.findByCryptoCurrency(cryptoCurrency);
+
+        if (!userNotifications.isEmpty()) {
+
+            for (UserNotification userNotification : userNotifications) {
+                double registeredPrice = userNotification.getRegisteredPrice();
+                double newPrice = cryptoCurrency.getCurrentPrice();
+                double priceChangePercentage = Math.round(((newPrice - registeredPrice) / registeredPrice) * 100);
+
+                if (Math.abs(priceChangePercentage) >= 1) {
                     log.warn("Цена {} изменилась на {} % для пользователя {}", cryptoCurrency.getSymbol(), priceChangePercentage, userNotification.getUsername());
                     userNotification.setRegisteredPrice(newPrice);
                 }
             }
         }
+
+
     }
 }
