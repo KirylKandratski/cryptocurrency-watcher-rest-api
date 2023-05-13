@@ -9,6 +9,7 @@ import kandratski.testprojects.cryptocurrencywatcherrestapi.entity.CryptoCurrenc
 import kandratski.testprojects.cryptocurrencywatcherrestapi.repository.CryptoCurrencyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 
@@ -50,11 +51,6 @@ public class CryptoCurrencyService {
     }
 
     @PostConstruct
-    public void loadAndScheduleCryptoCurrencies() {
-        loadCryptoCurrencies();
-        schedulePriceUpdates();
-    }
-
     private void loadCryptoCurrencies() {
         List<CryptoCurrency> cryptoCurrencies = new ArrayList<>();
 
@@ -77,12 +73,7 @@ public class CryptoCurrencyService {
         cryptoCurrencyRepository.saveAll(cryptoCurrencies);
     }
 
-    private void schedulePriceUpdates() {
-        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.initialize();
-        scheduler.scheduleAtFixedRate(this::updateCryptoCurrencyPrices, TimeUnit.SECONDS.toMillis(10));
-    }
-
+    @Scheduled(fixedDelay = 10000)
     private void updateCryptoCurrencyPrices() {
         List<CryptoCurrency> cryptoCurrencies = cryptoCurrencyRepository.findAll();
 
