@@ -88,7 +88,7 @@ public class CryptoCurrencyService {
         cryptoCurrencyRepository.saveAll(cryptoCurrencies);
     }
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 60000)
     private void updateCryptoCurrencyPrices() {
         List<CryptoCurrency> cryptoCurrencies = cryptoCurrencyRepository.findAll();
 
