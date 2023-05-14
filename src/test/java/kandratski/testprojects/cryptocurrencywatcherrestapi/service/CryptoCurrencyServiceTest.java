@@ -1,7 +1,5 @@
 package kandratski.testprojects.cryptocurrencywatcherrestapi.service;
 
-import kandratski.testprojects.cryptocurrencywatcherrestapi.client.CoinLoreApiClient;
-import kandratski.testprojects.cryptocurrencywatcherrestapi.config.SupportedCryptoCurrencies;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.dto.CryptoCurrencyDto;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.entity.CryptoCurrency;
 import kandratski.testprojects.cryptocurrencywatcherrestapi.mapper.CryptoCurrencyMapper;
@@ -18,7 +16,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CryptoCurrencyServiceTest {
@@ -28,12 +29,6 @@ public class CryptoCurrencyServiceTest {
 
     @Mock
     private CryptoCurrencyRepository cryptoCurrencyRepository;
-    @Mock
-    private NotificationService notificationService;
-    @Mock
-    private SupportedCryptoCurrencies supportedCryptoCurrencies;
-    @Mock
-    private CoinLoreApiClient coinLoreApiClient;
     @Mock
     private CryptoCurrencyMapper cryptoCurrencyMapper;
 
